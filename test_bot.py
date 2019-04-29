@@ -41,19 +41,30 @@ def setup_proxy_and_start(token, proxy=True):
 def main(updater):
     dp = updater.dispatcher
     conv_hadler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', start,
+                                     pass_user_data=True)],
         states={
-            1: [MessageHandler(Filters.text, first_answer)],
-            2: [MessageHandler(Filters.text, sknd_answer)],
-            3: [MessageHandler(Filters.text, thrd_answer)],
-            4: [MessageHandler(Filters.text, fourth_answer)],
-            5: [MessageHandler(Filters.text, fifth_answer)],
-            6: [MessageHandler(Filters.text, sixth_answer)],
-            7: [MessageHandler(Filters.text, seventh_answer)],
-            8: [MessageHandler(Filters.text, eighth_answer)],
-            9: [MessageHandler(Filters.text, nine_answer)]
+            1: [MessageHandler(Filters.text, first_answer,
+                               pass_user_data=True)],
+            2: [MessageHandler(Filters.text, sknd_answer,
+                               pass_user_data=True)],
+            3: [MessageHandler(Filters.text, thrd_answer,
+                               pass_user_data=True)],
+            4: [MessageHandler(Filters.text, fourth_answer,
+                               pass_user_data=True)],
+            5: [MessageHandler(Filters.text, fifth_answer,
+                               pass_user_data=True)],
+            6: [MessageHandler(Filters.text, sixth_answer,
+                               pass_user_data=True)],
+            7: [MessageHandler(Filters.text, seventh_answer,
+                               pass_user_data=True)],
+            8: [MessageHandler(Filters.text, eighth_answer,
+                               pass_user_data=True)],
+            9: [MessageHandler(Filters.text, nine_answer,
+                               pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[CommandHandler('stop', stop,
+                                  pass_user_data=True)]
     )
 
     dp.add_handler(conv_hadler)
@@ -63,7 +74,7 @@ def main(updater):
     updater.idle()
 
 
-def start(bot, update):
+def start(bot, update, user_data):
     reply_keyboard = [['да'], ['нет']]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(
@@ -72,14 +83,17 @@ def start(bot, update):
         #update.message.reply_text(update.message.text)
         return ConversationHandler.END
     else:
+        user_data['score']=0
         return 1
 
-def stop(bot, update):
-    update.message.reply_text("Всего доброго!")
+def stop(bot, update, user_data):
+    score = user_data['score']
+    update.message.reply_text('Ваш результат {}/8'.format(score))
+    update.message.reply_text("Пока")
     return ConversationHandler.END
 
 def geocode(bot, updater):
-    print(211)
+
     geocoder_uri = geocoder_request_template = \
         "http://geocode-maps.yandex.ru/1.x/"
     response = requests.get(geocoder_uri, params={
@@ -115,7 +129,7 @@ def toponim(bot, update):
     update.message.reply_text("Введите название обьекта")
     geocode()
 
-def first_answer(bot, update):
+def first_answer(bot, update, user_data):
     reply_keyboard = [['якутия'], ['забайкальский край'],
                       ['тюменская область'], ['хабаровский край']]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -125,9 +139,13 @@ def first_answer(bot, update):
 
     return 2
 
-def sknd_answer(bot, update):
+def sknd_answer(bot, update, user_data):
     if update.message.text != 'якутия':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Чукоткий АО', 'Еврейская АО'],
                      ['Адыгея', 'Ненецкий АО']]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -137,9 +155,13 @@ def sknd_answer(bot, update):
 
     return 3
 
-def  thrd_answer(bot, update):
+def  thrd_answer(bot, update, user_data):
     if update.message.text != 'Ненецкий АО':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['да'], ['нет']]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text("Вопрос 3")
@@ -148,9 +170,13 @@ def  thrd_answer(bot, update):
 
     return 4
 
-def fourth_answer(bot, update):
+def fourth_answer(bot, update, user_data):
     if update.message.text != 'да':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Эстония', 'Латвия'],
                      ['Литва', 'Беларусь']]
 
@@ -162,9 +188,13 @@ def fourth_answer(bot, update):
 
     return 5
 
-def fifth_answer(bot, update):
+def fifth_answer(bot, update, user_data):
     if update.message.text != 'Литва':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Самара', 'Сызрань'],
                       ['Элиста', 'Казань']]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -174,10 +204,14 @@ def fifth_answer(bot, update):
 
 
     return 6
-
-def sixth_answer(bot, update):
+print()
+def sixth_answer(bot, update, user_data):
     if update.message.text != 'Элиста':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Урал', 'Обь'],
                       ['Дон', 'Печора']]
 
@@ -188,9 +222,13 @@ def sixth_answer(bot, update):
     
     return 7
 
-def seventh_answer(bot, update):
+def seventh_answer(bot, update, user_data):
     if update.message.text != 'Обь':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Анапа', 'Сочи'],
                       ['Туапсе', 'Новороссийск']]
 
@@ -201,10 +239,13 @@ def seventh_answer(bot, update):
 
     return 8
 
-def eighth_answer(bot, update):
+def eighth_answer(bot, update, user_data):
     if update.message.text != 'Сочи':
         update.message.reply_text("Ответ не верный.")
-
+    else:
+        update.message.reply_text('Ответ верный.')
+        score = user_data['score']
+        user_data['score'] = score + 1
     reply_keyboard = [['Монголия', 'Китай'],
                       ['Казахстан', 'Северная Корея']]
 
@@ -216,9 +257,14 @@ def eighth_answer(bot, update):
 
     return 9
 
-def nine_answer(bot, update):
+def nine_answer(bot, update, user_data):
+    score = user_data['score']
     if update.message.text != 'Северная Корея':
         update.message.reply_text("Ответ не верный.")
+    else:
+        update.message.reply_text('Ответ верный.')
+        score+= 1
+        update.message.reply_text('Ваш результат {}/8'.format(score))
     update.message.reply_text("Спасибо за прохождение теста")
     return ConversationHandler.END
 
